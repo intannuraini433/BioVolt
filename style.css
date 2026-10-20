@@ -1,0 +1,822 @@
+/* ============ Warna utama ============ */
+:root {
+  --hijau-tua: #0f3d2e;
+  --hijau: #1f9d63;
+  --hijau-muda: #e8f5ee;
+  --abu: #f4f6f8;
+  --teks: #1c2b25;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: "Segoe UI", sans-serif;
+  background: var(--abu);
+  color: var(--teks);
+  display: flex;            /* sidebar dan konten berdampingan */
+  min-height: 100vh;
+}
+
+/* ============ Sidebar ============ */
+.sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  color: white;
+  padding: 24px 16px;
+
+  /* Lapisan hijau gelap di atas foto, supaya tulisan tetap terbaca */
+  background:
+    linear-gradient(rgba(10, 45, 32, 0.78), rgba(10, 45, 32, 0.92)),
+    url("images/sampah organik.jpg") center / cover no-repeat;
+}
+
+/* Logo */
+.logo {
+  font-family: "Orbitron", sans-serif;
+  font-weight: 900;
+  font-size: 1.5rem;
+  letter-spacing: 1px;
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.logo .ikon { color: #ffd93b; }
+.logo .teks-logo {
+  background: linear-gradient(90deg, #6ee7a0, #ffd93b);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Menu: efek kaca (glassmorphism) */
+.menu {
+  display: block;
+  padding: 12px 14px;
+  color: #e3f4ea;
+  text-decoration: none;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  border: 1px solid transparent;
+  transition: all 0.25s ease;
+}
+.menu:hover {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.menu.aktif {
+  background: rgba(46, 204, 113, 0.28);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  color: white;
+  font-weight: 600;
+}
+
+/* ============ Konten ============ */
+.konten {
+  flex: 1;
+  min-width: 0;             /* mencegah grafik membuat halaman melebar */
+  padding: 32px;
+}
+.halaman { display: none; }        /* semua halaman disembunyikan */
+.halaman.aktif { display: block; } /* kecuali yang aktif */
+.halaman h2 { margin-bottom: 20px; }
+
+/* ============ Bar status ============ */
+.status-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: white;
+  padding: 12px 18px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  font-weight: 600;
+}
+.status-bar small {
+  margin-left: auto;
+  color: #7a8a82;
+  font-weight: 400;
+}
+.titik {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--hijau);
+  box-shadow: 0 0 0 4px rgba(31, 157, 99, 0.2);
+}
+.status-bar.waspada .titik {
+  background: #e67e22;
+  box-shadow: 0 0 0 4px rgba(230, 126, 34, 0.2);
+}
+
+/* ============ Panel device ============ */
+.device {
+  background: white;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+.device-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  border-bottom: 1px solid #eef1ef;
+}
+.device-header small {
+  font-weight: 400;
+  color: #7a8a82;
+  margin-left: 8px;
+}
+
+/* 3 kolom: gauge | daya | grafik */
+.device-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr 2fr;
+}
+.device-gauge,
+.device-daya {
+  padding: 16px 20px;
+  text-align: center;
+  border-right: 1px solid #eef1ef;
+}
+.device-chart { padding: 12px 16px; }
+.kanvas { position: relative; height: 170px; }
+
+.sub { font-size: 0.85rem; color: #4a5a52; margin-bottom: 8px; }
+
+/* Gauge */
+.gauge { width: 100%; max-width: 200px; }
+.gauge-bg { fill: none; stroke: #e8f5ee; stroke-width: 22; }
+.gauge-isi {
+  fill: none;
+  stroke-width: 22;
+  stroke-dasharray: 251.3;
+  stroke-dashoffset: 251.3;
+  transition: stroke-dashoffset 0.8s ease;
+}
+.jarum {
+  stroke: #1c2b25;
+  stroke-width: 4;
+  stroke-linecap: round;
+  transform-origin: 100px 100px;
+  transition: transform 0.8s ease;
+}
+.gauge-pusat { fill: #1c2b25; }
+.gauge-nilai {
+  font-family: "Orbitron", sans-serif;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+/* Kolom daya */
+.daya-nilai {
+  font-family: "Orbitron", sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 14px 0;
+}
+.daya-nilai small { font-size: 0.9rem; color: var(--hijau); }
+.daya-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #6b7c74;
+  margin-bottom: 8px;
+}
+.daya-mini {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #6b7c74;
+}
+
+/* ============ Tablet dan HP ============ */
+@media (max-width: 900px) {
+  .device-body { grid-template-columns: 1fr 1fr; }
+  .device-daya { border-right: none; }
+  .device-chart {
+    grid-column: 1 / -1;
+    border-top: 1px solid #eef1ef;
+  }
+}
+/* ============ HP: sidebar jadi menu atas ============ */
+@media (max-width: 700px) {
+  body { flex-direction: column; }
+
+  .sidebar {
+    width: 100%;
+    padding: 14px 12px;
+  }
+  .logo {
+    margin-bottom: 12px;
+    font-size: 1.25rem;
+  }
+
+  /* Menu berjajar ke samping dan bisa digeser */
+  .sidebar nav {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  .menu {
+    white-space: nowrap;   /* teks tidak turun baris */
+    margin-bottom: 0;
+    padding: 10px 14px;
+    font-size: 0.9rem;
+  }
+
+  .konten { padding: 18px 14px; }
+
+  /* Gauge dan daya ditumpuk satu kolom */
+  .device-body { grid-template-columns: 1fr; }
+  .device-gauge,
+  .device-daya {
+    border-right: none;
+    border-bottom: 1px solid #eef1ef;
+  }
+}
+/* ============ Halaman Monitoring Listrik ============ */
+/* ============ Kartu ringkasan: 4 sejajar + efek ============ */
+.grid-ringkas {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);   /* tepat 4 kolom sejajar */
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.ringkas {
+  position: relative;
+  overflow: hidden;
+  padding: 20px;
+  border-radius: 18px;
+  color: white;
+  background: linear-gradient(145deg, #0f3d2e, #14573f);
+  box-shadow: 0 8px 24px rgba(15, 61, 46, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Efek 1: garis cahaya hijau-kuning yang berputar di tepi kartu */
+.ringkas::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  background: conic-gradient(from var(--sudut), transparent 0 70%, #6ee7a0, #ffd93b, transparent);
+  animation: putar 4s linear infinite;
+  z-index: 0;
+}
+/* Lapisan isi kartu di atas garis cahaya, menyisakan tepi 2px */
+.ringkas::after {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #0f3d2e, #14573f);
+  z-index: 1;
+}
+.ringkas > * { position: relative; z-index: 2; }
+
+@property --sudut {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+@keyframes putar { to { --sudut: 360deg; } }
+
+/* Efek 2: kartu terangkat dan bercahaya saat disentuh */
+.ringkas:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 16px 36px rgba(31, 157, 99, 0.45);
+}
+
+/* Efek 3: ikon berdenyut */
+.ringkas-ikon {
+  display: inline-block;
+  font-size: 1.6rem;
+  animation: denyut 2s ease-in-out infinite;
+}
+@keyframes denyut {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.2); }
+}
+
+.ringkas-label {
+  color: #bfe8d0;
+  font-size: 0.85rem;
+  margin-top: 8px;
+}
+
+/* Efek 4: angka bercahaya */
+.ringkas-nilai {
+  font-family: "Orbitron", sans-serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-top: 6px;
+  text-shadow: 0 0 12px rgba(110, 231, 160, 0.7);
+}
+.ringkas-nilai small {
+  font-size: 0.8rem;
+  color: #ffd93b;
+  text-shadow: none;
+}
+
+/* Label di kotak estimasi (latar terang) tetap abu-abu gelap */
+.estimasi .ringkas-label { color: #6b7c74; }
+
+/* Tablet: 2 kolom. HP kecil: 1 kolom */
+@media (max-width: 1100px) {
+  .grid-ringkas { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 500px) {
+  .grid-ringkas { grid-template-columns: 1fr; }
+}
+.panel {
+  background: white;
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
+  margin-bottom: 24px;
+}
+.panel h3 { font-size: 1rem; margin-bottom: 14px; }
+.catatan { font-size: 0.8rem; color: #7a8a82; margin: -8px 0 14px; }
+.kanvas-besar { position: relative; height: 280px; }
+
+.grid-estimasi {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+}
+.estimasi {
+  background: var(--hijau-muda);
+  padding: 16px;
+  border-radius: 12px;
+}
+.estimasi-nilai {
+  font-family: "Orbitron", sans-serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-top: 6px;
+}
+.estimasi-nilai small { font-size: 0.8rem; color: var(--hijau); }
+/* ============ Halaman Biodigester & Gas ============ */
+
+/* Bar level tangki gas */
+.bar {
+  height: 28px;
+  background: var(--hijau-muda);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.bar-isi {
+  height: 100%;
+  width: 0%;
+  border-radius: 14px;
+  background: linear-gradient(90deg, #1f9d63, #6ee7a0, #ffd93b);
+  transition: width 0.8s ease;
+}
+.bar-skala {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: #7a8a82;
+  margin-top: 6px;
+}
+
+/* Daftar sensor */
+.grid-sensor {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+.sensor {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--hijau-muda);
+  padding: 14px 16px;
+  border-radius: 12px;
+}
+.sensor div { flex: 1; }
+.sensor-nama { font-weight: 600; font-size: 0.9rem; }
+.sensor small { color: #7a8a82; }
+.sensor b {
+  font-family: "Orbitron", sans-serif;
+  font-size: 0.9rem;
+}
+
+/* Lampu indikator: hijau = normal, oranye = perhatian */
+.lampu {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--hijau);
+  box-shadow: 0 0 0 4px rgba(31, 157, 99, 0.25);
+  animation: kedip 2s ease-in-out infinite;
+}
+.lampu.perhatian {
+  background: #e67e22;
+  box-shadow: 0 0 0 4px rgba(230, 126, 34, 0.25);
+}
+@keyframes kedip {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.45; }
+}
+/* ============ Halaman Perangkat IoT ============ */
+
+/* Kotak info perangkat */
+.grid-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 14px;
+}
+.info {
+  background: var(--hijau-muda);
+  padding: 14px 16px;
+  border-radius: 12px;
+}
+.info-nilai {
+  font-weight: 700;
+  margin-top: 6px;
+}
+
+/* Lencana status */
+.lencana {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.lencana.abu   { background: #e4e8e6; color: #5b6b63; }
+.lencana.hijau { background: #d4f1e1; color: #15704a; }
+
+/* Tabel sensor */
+.tabel-bungkus { overflow-x: auto; }   /* bisa digeser di HP */
+.tabel {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+.tabel th {
+  text-align: left;
+  padding: 10px 12px;
+  background: var(--hijau-tua);
+  color: white;
+  white-space: nowrap;
+}
+.tabel th:first-child { border-radius: 10px 0 0 10px; }
+.tabel th:last-child  { border-radius: 0 10px 10px 0; }
+.tabel td {
+  padding: 12px;
+  border-bottom: 1px solid #eef1ef;
+  white-space: nowrap;
+}
+.tabel tbody tr:hover { background: var(--hijau-muda); }
+/* ============ Halaman Riwayat Data ============ */
+.riwayat-atas {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.riwayat-atas .catatan { margin: 0; }
+
+.tombol-grup { display: flex; gap: 10px; }
+.tombol {
+  border: none;
+  cursor: pointer;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: var(--hijau);
+  color: white;
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.tombol:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(31, 157, 99, 0.35);
+}
+.tombol.abu { background: #e4e8e6; color: #3d4c45; }
+.tombol.abu:hover { box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12); }
+
+.jumlah-data { font-size: 0.85rem; color: #6b7c74; margin-bottom: 10px; }
+.lencana.oranye { background: #fde7d0; color: #a8560f; }
+
+.tabel .kosong { text-align: center; color: #7a8a82; padding: 24px; }
+
+/* Tabel riwayat bisa digulir ke bawah kalau datanya panjang */
+#tabel-riwayat { font-variant-numeric: tabular-nums; }
+/* ============ Notifikasi ============ */
+
+/* Lonceng */
+.topbar {
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+.lonceng {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 50%;
+  background: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+.lonceng:hover { transform: scale(1.08); }
+.badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 10px;
+  background: #e74c3c;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Daftar notifikasi (dropdown) */
+.panel-notif {
+  display: none;
+  position: absolute;
+  top: 54px;
+  right: 0;
+  width: min(360px, 90vw);
+  max-height: 420px;
+  overflow-y: auto;
+  background: white;
+  border-radius: 14px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+  z-index: 50;
+}
+.panel-notif.buka { display: block; }
+.notif-kepala {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  border-bottom: 1px solid #eef1ef;
+}
+.notif-kepala button {
+  border: none;
+  background: none;
+  color: var(--hijau);
+  font-weight: 600;
+  cursor: pointer;
+}
+.notif-kosong { padding: 24px; text-align: center; color: #7a8a82; font-size: 0.9rem; }
+.notif-item {
+  display: flex;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f1f4f2;
+  border-left: 4px solid var(--hijau);
+}
+.notif-item.peringatan { border-left-color: #e67e22; }
+.notif-item.bahaya     { border-left-color: #e74c3c; background: #fff5f4; }
+.notif-ikon { font-size: 1.3rem; }
+.notif-judul { font-weight: 700; font-size: 0.9rem; }
+.notif-pesan { font-size: 0.82rem; color: #4a5a52; margin: 2px 0; }
+.notif-item small { color: #8a9a92; }
+
+/* Pop-up (toast) */
+#toast-wadah {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: min(340px, calc(100vw - 32px));
+}
+.toast {
+  display: flex;
+  gap: 12px;
+  padding: 14px 16px;
+  background: white;
+  border-radius: 12px;
+  border-left: 5px solid var(--hijau);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.2);
+  animation: masuk 0.35s ease;
+}
+.toast.peringatan { border-left-color: #e67e22; }
+.toast.bahaya     { border-left-color: #e74c3c; background: #fff5f4; }
+.toast span { font-size: 1.4rem; }
+.toast b { font-size: 0.92rem; }
+.toast p { font-size: 0.82rem; color: #4a5a52; margin-top: 2px; }
+.toast.keluar { opacity: 0; transform: translateX(30px); transition: all 0.4s ease; }
+@keyframes masuk {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Banner alarm kebocoran */
+.alarm {
+  display: none;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  border-radius: 14px;
+  color: white;
+  background: linear-gradient(90deg, #c0392b, #e74c3c);
+  box-shadow: 0 8px 24px rgba(192, 57, 43, 0.4);
+  animation: alarmKedip 1s ease-in-out infinite;
+}
+.alarm.tampil { display: flex; }
+.alarm-ikon { font-size: 2rem; }
+.alarm div { flex: 1; }
+.alarm p { font-size: 0.85rem; margin-top: 2px; }
+.alarm button {
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+@keyframes alarmKedip {
+  0%, 100% { box-shadow: 0 8px 24px rgba(192, 57, 43, 0.4); }
+  50%      { box-shadow: 0 8px 36px rgba(231, 76, 60, 0.9); }
+}
+
+/* Panel deteksi kebocoran */
+.bocor {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.bocor > div:first-child { flex: 1; min-width: 160px; }
+.bocor-nilai {
+  font-family: "Orbitron", sans-serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-top: 4px;
+}
+.bocor-nilai small { font-size: 0.85rem; color: var(--hijau); }
+.lencana.merah { background: #fbd9d5; color: #b02a1c; }
+
+/* Perbaikan warna label di kotak info & kebocoran (latar terang) */
+.info .ringkas-label,
+.bocor .ringkas-label { color: #6b7c74; }
+/* ============ Menu & Halaman Notifikasi ============ */
+
+/* Angka merah di menu sidebar */
+.menu { position: relative; }
+.menu-badge {
+  display: none;
+  float: right;
+  min-width: 22px;
+  padding: 1px 7px;
+  border-radius: 11px;
+  background: #e74c3c;
+  color: white;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-align: center;
+}
+.menu-badge.tampil { display: inline-block; }
+.menu-badge.bahaya { animation: badgeKedip 0.9s ease-in-out infinite; }
+@keyframes badgeKedip {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7); }
+  50%      { box-shadow: 0 0 0 7px rgba(231, 76, 60, 0); }
+}
+
+/* Tombol di dalam dropdown lonceng */
+.lihat-semua {
+  width: 100%;
+  border: none;
+  background: var(--hijau-muda);
+  color: var(--hijau-tua);
+  padding: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 0 0 14px 14px;
+}
+.lihat-semua:hover { background: #d4f1e1; }
+
+/* Kotak ringkasan jumlah */
+.grid-notif-ringkas {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.nr {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: 14px;
+  background: white;
+  border-left: 5px solid var(--hijau);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
+}
+.nr.bahaya     { border-left-color: #e74c3c; }
+.nr.peringatan { border-left-color: #e67e22; }
+.nr span { font-size: 1.8rem; }
+.nr p { font-size: 0.82rem; color: #6b7c74; }
+.nr b { font-family: "Orbitron", sans-serif; font-size: 1.6rem; }
+
+/* Tombol filter */
+.filter { display: flex; gap: 8px; flex-wrap: wrap; }
+.chip {
+  border: 1px solid #d5ddd9;
+  background: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #4a5a52;
+  transition: all 0.2s ease;
+}
+.chip:hover { border-color: var(--hijau); }
+.chip.aktif {
+  background: var(--hijau);
+  border-color: var(--hijau);
+  color: white;
+}
+
+/* Kartu notifikasi di halaman penuh */
+.nk {
+  border: 1px solid #eef1ef;
+  border-left: 5px solid var(--hijau);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+}
+.nk.peringatan { border-left-color: #e67e22; }
+.nk.bahaya     { border-left-color: #e74c3c; background: #fff7f6; }
+.nk-atas {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.nk-atas .nk-judul { font-weight: 700; flex: 1; min-width: 160px; }
+.nk-atas small { color: #8a9a92; }
+.nk-pesan { font-size: 0.88rem; color: #4a5a52; margin: 6px 0 10px; }
+
+.nk-detail {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.nk-kotak {
+  background: rgba(0, 0, 0, 0.035);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 0.82rem;
+}
+.nk-kotak b {
+  display: block;
+  font-size: 0.75rem;
+  letter-spacing: 0.3px;
+  color: #6b7c74;
+  margin-bottom: 4px;
+}
+.nk-kotak ul { padding-left: 18px; }
+.nk-kotak li { margin-bottom: 3px; }
+
+.nk-lompat {
+  margin-top: 10px;
+  border: none;
+  background: none;
+  color: var(--hijau);
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+@media (max-width: 700px) {
+  .grid-notif-ringkas { grid-template-columns: 1fr; }
+  .nk-detail { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BioVolt</title>
+
+  <!-- Font Orbitron untuk logo dan angka -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Sidebar (menu samping) -->
+  <aside class="sidebar">
+    <h1 class="logo"><span class="ikon">⚡</span><span class="teks-logo">BioVolt</span></h1>
+    <nav>
+      <a href="#" class="menu aktif" data-page="dashboard">Dashboard</a>
+      <a href="#" class="menu" data-page="listrik">Monitoring Listrik</a>
+      <a href="#" class="menu" data-page="biogas">Biodigester &amp; Gas</a>
+      <a href="#" class="menu" data-page="iot">Perangkat IoT</a>
+           <a href="#" class="menu" data-page="riwayat">Riwayat Data</a>
+      <a href="#" class="menu" data-page="notifikasi">Notifikasi <span class="menu-badge" id="menu-badge">0</span></a>
+    </nav>
+  </aside>
+
+  <!-- Konten utama -->
+  <main class="konten">
+    <!-- Lonceng notifikasi -->
+    <div class="topbar">
+      <button class="lonceng" id="tombol-lonceng">🔔<span class="badge" id="badge-notif">0</span></button>
+
+      <div class="panel-notif" id="panel-notif">
+        <div class="notif-kepala">
+          <b>Notifikasi</b>
+          <button id="bersihkan-notif">Bersihkan</button>
+        </div>
+               <div id="daftar-notif"></div>
+        <button class="lihat-semua" id="lihat-semua-notif">Lihat semua di menu Notifikasi →</button>
+      </div>
+    </div>
+
+    <!-- Banner alarm kebocoran -->
+    <div class="alarm" id="alarm">
+      <span class="alarm-ikon">🚨</span>
+      <div>
+        <b>BAHAYA: Terdeteksi kebocoran gas!</b>
+        <p>Kadar gas <span id="alarm-ppm">0</span> ppm. Jauhkan api, buka ventilasi, dan periksa sambungan pipa.</p>
+      </div>
+      <button id="alarm-tutup">Tutup</button>
+    </div>
+    <!-- Halaman 1: Dashboard -->
+    <section id="dashboard" class="halaman aktif">
+      <h2>Dashboard Monitoring</h2>
+
+      <!-- Bar status sistem -->
+      <div class="status-bar" id="status-bar">
+        <span class="titik"></span>
+        <span id="status-teks">Sistem Normal</span>
+        <small>Data simulasi</small>
+      </div>
+
+      <!-- Panel device dibuat otomatis oleh script.js -->
+      <div id="daftar-device"></div>
+    </section>
+
+   <section id="listrik" class="halaman">
+  <h2>Monitoring Listrik</h2>
+
+  <!-- 4 kartu ringkasan -->
+  <div class="grid-ringkas">
+    <div class="ringkas">
+      <span class="ringkas-ikon">⚡</span>
+      <p class="ringkas-label">Tegangan Rata-rata</p>
+      <p class="ringkas-nilai"><span id="lt-tegangan">0</span> <small>V</small></p>
+    </div>
+    <div class="ringkas">
+      <span class="ringkas-ikon">🔌</span>
+      <p class="ringkas-label">Total Arus</p>
+      <p class="ringkas-nilai"><span id="lt-arus">0</span> <small>A</small></p>
+    </div>
+    <div class="ringkas">
+      <span class="ringkas-ikon">💡</span>
+      <p class="ringkas-label">Total Daya</p>
+      <p class="ringkas-nilai"><span id="lt-daya">0</span> <small>W</small></p>
+    </div>
+    <div class="ringkas">
+      <span class="ringkas-ikon">🔋</span>
+      <p class="ringkas-label">Energi Terkumpul</p>
+      <p class="ringkas-nilai"><span id="lt-energi">0</span> <small>kWh</small></p>
+    </div>
+  </div>
+
+  <!-- Grafik langsung -->
+  <div class="panel">
+    <h3>Grafik Tegangan dan Daya (Langsung)</h3>
+    <div class="kanvas-besar"><canvas id="grafik-listrik"></canvas></div>
+  </div>
+
+  <!-- Estimasi energi -->
+  <div class="panel">
+    <h3>Estimasi Energi</h3>
+    <p class="catatan">Dihitung dari daya saat ini, dengan anggapan daya tetap sepanjang waktu.</p>
+    <div class="grid-estimasi">
+      <div class="estimasi">
+        <p class="ringkas-label">Per Hari</p>
+        <p class="estimasi-nilai"><span id="lt-hari">0</span> <small>kWh</small></p>
+      </div>
+      <div class="estimasi">
+        <p class="ringkas-label">Per Bulan</p>
+        <p class="estimasi-nilai"><span id="lt-bulan">0</span> <small>kWh</small></p>
+      </div>
+      <div class="estimasi">
+        <p class="ringkas-label">Perkiraan Nilai (per bulan)</p>
+        <p class="estimasi-nilai">Rp <span id="lt-biaya">0</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+  <section id="biogas" class="halaman">
+  <h2>Biodigester &amp; Gas</h2>
+
+  <!-- Status biodigester -->
+  <div class="status-bar" id="status-biogas">
+    <span class="titik"></span>
+    <span id="status-biogas-teks">Biodigester Normal</span>
+    <small>Data simulasi</small>
+  </div>
+
+  <!-- 4 kartu ringkasan -->
+  <div class="grid-ringkas">
+    <div class="ringkas">
+      <span class="ringkas-ikon">🌡️</span>
+      <p class="ringkas-label">Suhu Digester</p>
+      <p class="ringkas-nilai"><span id="bg-suhu">0</span> <small>°C</small></p>
+    </div>
+    <div class="ringkas">
+      <span class="ringkas-ikon">🎈</span>
+      <p class="ringkas-label">Tekanan Gas</p>
+      <p class="ringkas-nilai"><span id="bg-tekanan">0</span> <small>kPa</small></p>
+    </div>
+    <div class="ringkas">
+      <span class="ringkas-ikon">🔥</span>
+      <p class="ringkas-label">Kadar Metana (CH₄)</p>
+      <p class="ringkas-nilai"><span id="bg-metana">0</span> <small>%</small></p>
+    </div>
+    <div class="ringkas">
+      <span class="ringkas-ikon">🛢️</span>
+      <p class="ringkas-label">Level Gas</p>
+      <p class="ringkas-nilai"><span id="bg-level">0</span> <small>%</small></p>
+    </div>
+  </div>
+  <!-- Deteksi kebocoran gas -->
+  <div class="panel">
+    <h3>Deteksi Kebocoran Gas</h3>
+    <p class="catatan">Sensor gas di udara sekitar digester dan pipa (contoh: MQ-4). Batas waspada 500 ppm dan bahaya 1000 ppm. Angka ini hanya contoh.</p>
+    <div class="bocor">
+      <div>
+        <p class="ringkas-label">Kadar gas di udara</p>
+        <p class="bocor-nilai"><span id="kb-ppm">0</span> <small>ppm</small></p>
+      </div>
+      <span class="lencana hijau" id="kb-status">Aman</span>
+      <div class="tombol-grup">
+        <button class="tombol" id="tombol-bocor">Simulasi Kebocoran</button>
+        <button class="tombol abu" id="tombol-normal">Normalkan</button>
+      </div>
+    </div>
+  </div>
+  <!-- Level tangki gas -->
+  <div class="panel">
+    <h3>Level Tangki Gas</h3>
+    <div class="bar"><div class="bar-isi" id="bar-level"></div></div>
+    <div class="bar-skala"><span>Kosong</span><span>Penuh</span></div>
+  </div>
+
+  <!-- Grafik -->
+  <div class="panel">
+    <h3>Grafik Suhu dan Tekanan (Langsung)</h3>
+    <div class="kanvas-besar"><canvas id="grafik-biogas"></canvas></div>
+  </div>
+
+  <!-- Indikator sensor -->
+  <div class="panel">
+    <h3>Indikator Sensor</h3>
+    <p class="catatan">Nama sensor hanyalah contoh. Nanti bisa kamu sesuaikan dengan sensor yang benar-benar dipakai.</p>
+    <div class="grid-sensor">
+
+      <div class="sensor">
+        <span class="lampu" id="lampu-suhu"></span>
+        <div><p class="sensor-nama">Sensor Suhu</p><small>DS18B20</small></div>
+        <b id="sv-suhu">-</b>
+      </div>
+
+      <div class="sensor">
+        <span class="lampu" id="lampu-tekanan"></span>
+        <div><p class="sensor-nama">Sensor Tekanan</p><small>BMP280</small></div>
+        <b id="sv-tekanan">-</b>
+      </div>
+
+      <div class="sensor">
+        <span class="lampu" id="lampu-metana"></span>
+        <div><p class="sensor-nama">Sensor Gas Metana</p><small>MQ-4</small></div>
+        <b id="sv-metana">-</b>
+      </div>
+
+      <div class="sensor">
+        <span class="lampu" id="lampu-level"></span>
+        <div><p class="sensor-nama">Sensor Level Gas</p><small>Ultrasonik</small></div>
+        <b id="sv-level">-</b>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+  <section id="iot" class="halaman">
+  <h2>Perangkat IoT</h2>
+
+  <!-- Status koneksi -->
+  <div class="status-bar waspada">
+    <span class="titik"></span>
+    <span>ESP32 belum terhubung (mode simulasi)</span>
+    <small>Koneksi dikerjakan di tahap berikutnya</small>
+  </div>
+
+  <!-- Info perangkat ESP32 -->
+  <div class="panel">
+    <h3>Perangkat Utama: ESP32</h3>
+    <div class="grid-info">
+      <div class="info">
+        <p class="ringkas-label">Nama Perangkat</p>
+        <p class="info-nilai">BioVolt-Node-01</p>
+      </div>
+      <div class="info">
+        <p class="ringkas-label">Model</p>
+        <p class="info-nilai">ESP32 DevKit</p>
+      </div>
+      <div class="info">
+        <p class="ringkas-label">Status</p>
+        <p class="info-nilai"><span class="lencana abu">Belum terhubung</span></p>
+      </div>
+      <div class="info">
+        <p class="ringkas-label">Sinyal WiFi</p>
+        <p class="info-nilai">-</p>
+      </div>
+      <div class="info">
+        <p class="ringkas-label">Data Terakhir Diterima</p>
+        <p class="info-nilai">-</p>
+      </div>
+      <div class="info">
+        <p class="ringkas-label">Lama Sesi Demo</p>
+        <p class="info-nilai"><span id="iot-sesi">00:00:00</span></p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Tabel sensor -->
+  <div class="panel">
+    <h3>Sensor yang Akan Dihubungkan</h3>
+    <p class="catatan">Nama sensor dan nomor pin hanyalah contoh. Sesuaikan dengan rangkaian yang sebenarnya.</p>
+    <div class="tabel-bungkus">
+      <table class="tabel">
+        <thead>
+          <tr>
+            <th>Sensor</th>
+            <th>Fungsi</th>
+            <th>Pin ESP32 (contoh)</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Sensor Tegangan</td>
+            <td>Mengukur tegangan (V)</td>
+            <td>GPIO 34</td>
+            <td><span class="lencana abu">Belum terhubung</span></td>
+          </tr>
+          <tr>
+            <td>Sensor Arus</td>
+            <td>Mengukur arus (A)</td>
+            <td>GPIO 35</td>
+            <td><span class="lencana abu">Belum terhubung</span></td>
+          </tr>
+          <tr>
+            <td>DS18B20</td>
+            <td>Suhu biodigester</td>
+            <td>GPIO 4</td>
+            <td><span class="lencana abu">Belum terhubung</span></td>
+          </tr>
+          <tr>
+            <td>BMP280</td>
+            <td>Tekanan gas</td>
+            <td>GPIO 21 (SDA), 22 (SCL)</td>
+            <td><span class="lencana abu">Belum terhubung</span></td>
+          </tr>
+          <tr>
+            <td>MQ-4</td>
+            <td>Kadar metana</td>
+            <td>GPIO 32</td>
+            <td><span class="lencana abu">Belum terhubung</span></td>
+          </tr>
+          <tr>
+            <td>Ultrasonik</td>
+            <td>Level gas / tangki</td>
+            <td>GPIO 5 (TRIG), 18 (ECHO)</td>
+            <td><span class="lencana abu">Belum terhubung</span></td>
+          </tr>
+    
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+   <section id="riwayat" class="halaman">
+  <h2>Riwayat Data</h2>
+
+  <div class="panel">
+    <div class="riwayat-atas">
+      <div>
+        <h3>Hasil Pengukuran Sesi Demo</h3>
+        <p class="catatan">Data simulasi, tercatat otomatis tiap 6 detik. Belum disimpan permanen, jadi hilang saat halaman di-refresh.</p>
+      </div>
+      <div class="tombol-grup">
+        <button class="tombol" id="tombol-unduh">⬇ Unduh CSV</button>
+        <button class="tombol abu" id="tombol-hapus">🗑 Hapus</button>
+      </div>
+    </div>
+
+    <p class="jumlah-data">Jumlah data: <b id="rw-jumlah">0</b></p>
+
+    <div class="tabel-bungkus">
+      <table class="tabel">
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Waktu</th>
+            <th>Tegangan (V)</th>
+            <th>Arus (A)</th>
+            <th>Daya (W)</th>
+            <th>Energi (kWh)</th>
+            <th>Suhu Maks (°C)</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="tabel-riwayat"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+  </main>
+      <!-- Halaman 6: Notifikasi -->
+    <section id="notifikasi" class="halaman">
+      <h2>Notifikasi</h2>
+
+      <!-- Ringkasan jumlah -->
+      <div class="grid-notif-ringkas">
+        <div class="nr bahaya"><span>🚨</span><div><p>Bahaya</p><b id="nr-bahaya">0</b></div></div>
+        <div class="nr peringatan"><span>⚠️</span><div><p>Peringatan</p><b id="nr-peringatan">0</b></div></div>
+        <div class="nr info"><span>✅</span><div><p>Info</p><b id="nr-info">0</b></div></div>
+      </div>
+
+      <div class="panel">
+        <div class="riwayat-atas">
+          <div class="filter" id="filter-notif">
+            <button class="chip aktif" data-filter="semua">Semua</button>
+            <button class="chip" data-filter="bahaya">Bahaya</button>
+            <button class="chip" data-filter="peringatan">Peringatan</button>
+            <button class="chip" data-filter="info">Info</button>
+          </div>
+          <button class="tombol abu" id="hapus-semua-notif">🗑 Hapus Semua</button>
+        </div>
+
+        <div id="halaman-daftar-notif"></div>
+      </div>
+    </section>
+
+  <!-- Urutan penting: Chart.js dulu, baru script.js -->
+    <!-- Wadah pop-up notifikasi -->
+  <div id="toast-wadah"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
